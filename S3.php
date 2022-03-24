@@ -2012,7 +2012,7 @@ class S3
 		// Convert null query string parameters to strings and sort
 		$parameters = array_map('strval', $parameters); 
 		uksort($parameters, array('self', '__sortMetaHeadersCmp'));
-		$queryString = http_build_query($parameters, null, '&', PHP_QUERY_RFC3986);
+		$queryString = http_build_query($parameters, "", '&', PHP_QUERY_RFC3986);
 
 		// Payload
 		$amzPayload = array($method);
@@ -2370,8 +2370,8 @@ final class S3Request
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $httpHeaders);
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
-		curl_setopt($curl, CURLOPT_WRITEFUNCTION, array(&$this, '__responseWriteCallback'));
-		curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this, '__responseHeaderCallback'));
+		curl_setopt($curl, CURLOPT_WRITEFUNCTION, array($this, '__responseWriteCallback'));
+		curl_setopt($curl, CURLOPT_HEADERFUNCTION, array($this, '__responseHeaderCallback'));
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
 		// Request types
@@ -2456,7 +2456,7 @@ final class S3Request
 	* @param string &$data Data
 	* @return integer
 	*/
-	private function __responseWriteCallback(&$curl, &$data)
+	private function __responseWriteCallback($curl, $data)
 	{
 		if (in_array($this->response->code, array(200, 206)) && $this->fp !== false)
 			return fwrite($this->fp, $data);
